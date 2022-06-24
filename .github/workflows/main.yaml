@@ -9,6 +9,9 @@ jobs:
       - id: foo
         uses: pcolby/hello-world-composite-action@v1
         with:
-          who-to-greet: 'Mona the Octocat'
+          who-to-greet:
+            - foo: what if
+              bar: this is
+              baz: complex?
       - run: echo random-number ${{ steps.foo.outputs.random-number }}
         shell: bash
