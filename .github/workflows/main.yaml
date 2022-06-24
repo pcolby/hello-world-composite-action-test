@@ -9,9 +9,12 @@ jobs:
       - id: foo
         uses: pcolby/hello-world-composite-action@v1
         with:
-          who-to-greet:
-            foo: what if
-            bar: this is
-            baz: complex?
+          who-to-greet: |
+            [
+              {
+                "foo": "${{ github.ref_name }}",
+                "baz": 123
+              ]
+            ]
       - run: echo random-number ${{ steps.foo.outputs.random-number }}
         shell: bash
