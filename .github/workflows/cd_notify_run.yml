@@ -7,7 +7,7 @@ on:
         workflows:
             # Are globs supported here?
             - 'Main'
-            - 'CD Notify Deployment Request'
+            - 'main.yaml'
         types:
             - completed
             - requested
