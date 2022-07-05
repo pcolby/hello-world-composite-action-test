@@ -1,6 +1,6 @@
 # Notify (via Slack channels) when deployments begin, succeed, and/or fail.
 
-name: CD Notify Deployment Execution
+name: CD Notify Deployment Run
 
 on:
     workflow_run:
