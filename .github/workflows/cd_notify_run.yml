@@ -6,7 +6,8 @@ on:
     workflow_run:
         workflows:
             # Are globs supported here?
-            - '* Production'
+            - '*main.yml'
+            - '*Run'
         types:
             - completed
             - requested
