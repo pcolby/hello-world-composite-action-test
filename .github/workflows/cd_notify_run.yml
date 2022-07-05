@@ -5,8 +5,8 @@ name: CD Notify Deployment Run
 on:
     workflow_run:
         workflows:
-            # Are globs supported here?
-            - '* Production'
+            - Main
+            - 'main.yaml'
         types:
             - completed
             - requested
