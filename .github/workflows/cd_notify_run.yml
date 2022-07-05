@@ -5,8 +5,8 @@ name: CD Notify Deployment Run
 on:
     workflow_run:
         workflows:
-            - '*ain'
-            #- 'main.yaml'
+            - '*in'
+            - '*Production'
         types:
             - completed
             - requested
