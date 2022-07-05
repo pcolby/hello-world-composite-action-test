@@ -5,7 +5,8 @@ name: CD Notify Deployment Run
 on:
     workflow_run:
         workflows:
-            - '*in'
+            - '*Staging'
+            - '*UAT'
             - '*Production'
         types:
             - completed
@@ -31,6 +32,9 @@ jobs:
               echo 'ICON_EMOJI=:warning:' >> "$GITHUB_ENV"
 
           - name: 'Notify #deployments'
+            if: >-
+              github.event.workflow.name == 'CD App Production' ||
+              github.event.workflow_run.conclusion == 'failure'
             continue-on-error: true
             uses: pcolby/post-to-slack@v1
             with:
@@ -56,7 +60,7 @@ jobs:
           - name: 'Notify #general'
             if: >-
               github.event.action == 'completed' &&
-              github.event.workflow.path == '.github/workflows/cd_production.yml' &&
+              github.event.workflow.name == 'CD App Production' &&
               github.event.workflow_run.conclusion == 'success'
             continue-on-error: true
             uses: pcolby/post-to-slack@v1
