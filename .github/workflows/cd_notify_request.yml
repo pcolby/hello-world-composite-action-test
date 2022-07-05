@@ -27,7 +27,7 @@ jobs:
               cat '${{ github.event_path }}'
               releaseVersion=$(sed -Ee 's/.*Release ([0-9]+\.[0-9]+).*/\1/ <<< "$PR_TITLE")
               echo "RELEASE_VERSION=$releaseVersion" >> "$GITHUB_ENV"
-            with:
+            env:
               PR_TITLE: ${{ github.event.pull_request.title  }}
 
           - name: 'Notify #deployments'
