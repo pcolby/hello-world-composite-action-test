@@ -35,7 +35,7 @@ jobs:
             uses: pcolby/post-to-slack@v1
             with:
               channel: '#cd-test-deployments'
-              icon_emoji: ${{ env.ICON_EMOJI }}
+              iconEmoji: ${{ env.ICON_EMOJI }}
               text: >-
                 <${{ github.event.workflow_run.html_url }}|${{ env.DEPLOY_STATUS }}>
                 `${{ github.event.workflow_run.name }}`
@@ -49,7 +49,7 @@ jobs:
             uses: pcolby/post-to-slack@v1
             with:
               channel: '#cd-test-dev-general'
-              icon_emoji: ${{ env.ICON_EMOJI }}
+              iconEmoji: ${{ env.ICON_EMOJI }}
               text: ${{ env.DEPLOY_STATUS }} '${{ github.event.workflow_run.name }}'
               url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
