@@ -17,7 +17,7 @@ jobs:
         name: Send Notifications
         runs-on: ubuntu-latest
         steps:
-          - if: endswith(github.event.actions, 'opened')
+          - if: endswith(github.event.action, 'opened')
             run: echo 'RELEASE_ACTION=requested' >> "$GITHUB_ENV"
           - if: github.event.action == 'closed' && github.event.pull_request.merged == true
             run: echo 'RELEASE_ACTION=initiated' >> "$GITHUB_ENV"
@@ -42,7 +42,7 @@ jobs:
               url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
           - name: 'Notify #general'
-            if: github.ref == 'production' && endswith(github.event.actions, 'opened')
+            if: github.ref == 'production' && endswith(github.event.action, 'opened')
             continue-on-error: true
             uses: pcolby/post-to-slack@v1
             with:
