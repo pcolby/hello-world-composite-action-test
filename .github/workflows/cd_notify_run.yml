@@ -17,7 +17,12 @@ jobs:
         name: Send Notifications
         runs-on: ubuntu-latest
         steps:
-          - run: cat '${{ github.event_path }}'
+          - run: |
+              cat '${{ github.event_path }}'
+              releaseVersion="$(sed -Ene 's/.*Release ([0-9]+\.[0-9]+).*/\1/p' <<< "$COMMIT_MESSAGE")"
+              echo "RELEASE_VERSION=$releaseVersion" >> "$GITHUB_ENV"
+            env:
+              COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
           - if: github.event.action == 'requested'
             run: >-
               echo 'DEPLOY_STATUS=Deploying' >> "$GITHUB_ENV"
