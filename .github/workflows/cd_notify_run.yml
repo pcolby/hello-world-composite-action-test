@@ -24,17 +24,11 @@ jobs:
             env:
               COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
           - if: github.event.action == 'requested'
-            run: >-
-              echo 'DEPLOY_STATUS=Deploying' >> "$GITHUB_ENV"
-              echo 'ICON_EMOJI=Deploying' >> "$GITHUB_ENV"
+            run: echo 'DEPLOY_STATUS=:warning: Deploying' >> "$GITHUB_ENV"
           - if: github.event.action == 'completed' && github.event.workflow_run.conclusion == 'success'
-            run: >-
-              echo 'DEPLOY_STATUS=:: Deployed' >> "$GITHUB_ENV"
-              echo 'ICON_EMOJI=:white_check_mark:' >> "$GITHUB_ENV"
+            run: echo 'DEPLOY_STATUS=:warning: Deployed' >> "$GITHUB_ENV"
           - if: github.event.action == 'completed' && github.event.workflow_run.conclusion == 'failure'
-            run: >-
-              echo 'DEPLOY_STATUS=:warning: Failed to deploy' >> "$GITHUB_ENV"
-              echo 'ICON_EMOJI=:warning:' >> "$GITHUB_ENV"
+            run: echo 'DEPLOY_STATUS=:warning: Failed to deploy' >> "$GITHUB_ENV"
 
           - name: 'Notify #deployments'
             if: >-
@@ -44,7 +38,6 @@ jobs:
             uses: pcolby/post-to-slack@v1
             with:
               channel: '#cd-test-deployments'
-              iconEmoji: ${{ env.ICON_EMOJI }}
               text: >-
                 <${{ github.event.workflow_run.html_url }}|${{ env.DEPLOY_STATUS }}>
                 `${{ github.event.workflow_run.name }}`
@@ -58,7 +51,6 @@ jobs:
             uses: pcolby/post-to-slack@v1
             with:
               channel: '#cd-test-dev-general'
-              iconEmoji: ${{ env.ICON_EMOJI }}
               text: ${{ env.DEPLOY_STATUS }} '${{ github.event.workflow_run.name }}'
               url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
