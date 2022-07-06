@@ -24,11 +24,11 @@ jobs:
               env:
                   COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
             - if: github.event.action == 'requested'
-              run: echo 'DEPLOY_STATUS=:warning: Deploying' >> "$GITHUB_ENV"
+              run: 'echo ''DEPLOY_STATUS=:warning: Deploying'' >> "$GITHUB_ENV"'
             - if: github.event.action == 'completed' && github.event.workflow_run.conclusion == 'success'
-              run: echo 'DEPLOY_STATUS=:warning: Deployed' >> "$GITHUB_ENV"
+              run: 'echo ''DEPLOY_STATUS=:warning: Deployed'' >> "$GITHUB_ENV"'
             - if: github.event.action == 'completed' && github.event.workflow_run.conclusion == 'failure'
-              run: echo 'DEPLOY_STATUS=:warning: Failed to deploy' >> "$GITHUB_ENV"
+              run: 'echo ''DEPLOY_STATUS=:warning: Failed to deploy'' >> "$GITHUB_ENV"
 
             - name: 'Notify #deployments'
               if: >-
