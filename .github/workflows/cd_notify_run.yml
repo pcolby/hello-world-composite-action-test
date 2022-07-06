@@ -29,9 +29,9 @@ jobs:
                   HEAD_SHA:       ${{ github.event.workflow_run.head_sha }}
                   WORKFLOW_NAME:  ${{ github.event.workflow.name }}
             - if: github.event.action == 'requested'
-              run: 'echo ''DEPLOY_STATUS=:warning: Deploying'' >> "$GITHUB_ENV"'
+              run: 'echo ''DEPLOY_STATUS=:hourglass_flowing_sand: Deploying'' >> "$GITHUB_ENV"'
             - if: github.event.action == 'completed' && github.event.workflow_run.conclusion == 'success'
-              run: 'echo ''DEPLOY_STATUS=:warning: Deployed'' >> "$GITHUB_ENV"'
+              run: 'echo ''DEPLOY_STATUS=:white_check_mark: Deployed'' >> "$GITHUB_ENV"'
             - if: github.event.action == 'completed' && github.event.workflow_run.conclusion == 'failure'
               run: 'echo ''DEPLOY_STATUS=:warning: Failed to deploy'' >> "$GITHUB_ENV"'
 
