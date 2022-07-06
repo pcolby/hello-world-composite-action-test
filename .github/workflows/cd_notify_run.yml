@@ -17,51 +17,51 @@ jobs:
         name: Send Notifications
         runs-on: ubuntu-latest
         steps:
-          - run: |
-              cat '${{ github.event_path }}'
-              releaseVersion="$(sed -Ene 's/.*Release ([0-9]+\.[0-9]+).*/\1/p' <<< "$COMMIT_MESSAGE")"
-              echo "RELEASE_VERSION=$releaseVersion" >> "$GITHUB_ENV"
-            env:
-              COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
-          - if: github.event.action == 'requested'
-            run: echo 'DEPLOY_STATUS=:warning: Deploying' >> "$GITHUB_ENV"
-          - if: github.event.action == 'completed' && github.event.workflow_run.conclusion == 'success'
-            run: echo 'DEPLOY_STATUS=:warning: Deployed' >> "$GITHUB_ENV"
-          - if: github.event.action == 'completed' && github.event.workflow_run.conclusion == 'failure'
-            run: echo 'DEPLOY_STATUS=:warning: Failed to deploy' >> "$GITHUB_ENV"
+            - run: |
+                  cat '${{ github.event_path }}'
+                  releaseVersion="$(sed -Ene 's/.*Release ([0-9]+\.[0-9]+).*/\1/p' <<< "$COMMIT_MESSAGE")"
+                  echo "RELEASE_VERSION=$releaseVersion" >> "$GITHUB_ENV"
+              env:
+                  COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
+            - if: github.event.action == 'requested'
+              run: echo 'DEPLOY_STATUS=:warning: Deploying' >> "$GITHUB_ENV"
+            - if: github.event.action == 'completed' && github.event.workflow_run.conclusion == 'success'
+              run: echo 'DEPLOY_STATUS=:warning: Deployed' >> "$GITHUB_ENV"
+            - if: github.event.action == 'completed' && github.event.workflow_run.conclusion == 'failure'
+              run: echo 'DEPLOY_STATUS=:warning: Failed to deploy' >> "$GITHUB_ENV"
 
-          - name: 'Notify #deployments'
-            if: >-
-              github.event.workflow.name == 'CD App Production' ||
-              github.event.workflow_run.conclusion == 'failure'
-            continue-on-error: true
-            uses: pcolby/post-to-slack@v1
-            with:
-              channel: '#cd-test-deployments'
-              text: >-
-                <${{ github.event.workflow_run.html_url }}|${{ env.DEPLOY_STATUS }}>
-                `${{ github.event.workflow_run.name }}`
-              url: ${{ secrets.SLACK_WEBHOOK_URL }}
+            - name: 'Notify #deployments'
+              if: >-
+                  github.event.workflow.name == 'CD App Production' ||
+                  github.event.workflow_run.conclusion == 'failure'
+              continue-on-error: true
+              uses: pcolby/post-to-slack@v1
+              with:
+                  channel: '#cd-test-deployments'
+                  text: >-
+                      <${{ github.event.workflow_run.html_url }}|${{ env.DEPLOY_STATUS }}>
+                      `${{ github.event.workflow_run.name }}`
+                  url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-          - name: 'Notify #dev-general'
-            if: >-
-              github.event.action == 'completed' &&
-              github.event.workflow_run.conclusion == 'failure'
-            continue-on-error: true
-            uses: pcolby/post-to-slack@v1
-            with:
-              channel: '#cd-test-dev-general'
-              text: ${{ env.DEPLOY_STATUS }} '${{ github.event.workflow_run.name }}'
-              url: ${{ secrets.SLACK_WEBHOOK_URL }}
+            - name: 'Notify #dev-general'
+              if: >-
+                  github.event.action == 'completed' &&
+                  github.event.workflow_run.conclusion == 'failure'
+              continue-on-error: true
+              uses: pcolby/post-to-slack@v1
+              with:
+                  channel: '#cd-test-dev-general'
+                  text: ${{ env.DEPLOY_STATUS }} '${{ github.event.workflow_run.name }}'
+                  url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-          - name: 'Notify #general'
-            if: >-
-              github.event.action == 'completed' &&
-              github.event.workflow.name == 'CD App Production' &&
-              github.event.workflow_run.conclusion == 'success'
-            continue-on-error: true
-            uses: pcolby/post-to-slack@v1
-            with:
-              channel: '#cd-test-general'
-              text: '@here Version ${{ env.RELEASE_VERSION }} is released to Production'
-              url: ${{ secrets.SLACK_WEBHOOK_URL }}
+            - name: 'Notify #general'
+              if: >-
+                  github.event.action == 'completed' &&
+                  github.event.workflow.name == 'CD App Production' &&
+                  github.event.workflow_run.conclusion == 'success'
+              continue-on-error: true
+              uses: pcolby/post-to-slack@v1
+              with:
+                  channel: '#cd-test-general'
+                  text: '@here Version ${{ env.RELEASE_VERSION }} is released to Production'
+                  url: ${{ secrets.SLACK_WEBHOOK_URL }}

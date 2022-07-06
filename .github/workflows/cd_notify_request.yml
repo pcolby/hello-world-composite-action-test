@@ -17,35 +17,35 @@ jobs:
         name: Send Notifications
         runs-on: ubuntu-latest
         steps:
-          - if: endswith(github.event.action, 'opened')
-            run: echo 'RELEASE_ACTION=requested' >> "$GITHUB_ENV"
-          - if: github.event.action == 'closed' && github.event.pull_request.merged == true
-            run: echo 'RELEASE_ACTION=initiated' >> "$GITHUB_ENV"
-          - if: github.event.action == 'closed' && github.event.pull_request.merged == false
-            run: echo 'RELEASE_ACTION=abandoned' >> "$GITHUB_ENV"
-          - run: |
-              cat '${{ github.event_path }}'
-              releaseVersion="$(sed -Ee 's/.*Release ([0-9]+\.[0-9]+).*/\1/' <<< "$PR_TITLE")"
-              echo "RELEASE_VERSION=$releaseVersion" >> "$GITHUB_ENV"
-            env:
-              PR_TITLE: ${{ github.event.pull_request.title  }}
+            - if: endswith(github.event.action, 'opened')
+              run: echo 'RELEASE_ACTION=requested' >> "$GITHUB_ENV"
+            - if: github.event.action == 'closed' && github.event.pull_request.merged == true
+              run: echo 'RELEASE_ACTION=initiated' >> "$GITHUB_ENV"
+            - if: github.event.action == 'closed' && github.event.pull_request.merged == false
+              run: echo 'RELEASE_ACTION=abandoned' >> "$GITHUB_ENV"
+            - run: |
+                  cat '${{ github.event_path }}'
+                  releaseVersion="$(sed -Ee 's/.*Release ([0-9]+\.[0-9]+).*/\1/' <<< "$PR_TITLE")"
+                  echo "RELEASE_VERSION=$releaseVersion" >> "$GITHUB_ENV"
+              env:
+                  PR_TITLE: ${{ github.event.pull_request.title  }}
 
-          - name: 'Notify #deployments'
-            continue-on-error: true
-            uses: pcolby/post-to-slack@v1
-            with:
-              channel: '#cd-test-deployments'
-              text: >-
-                Deployment of version ${{ env.RELEASE_VERSION}} to `${{ github.event.pull_request.base.ref }}`
-                <${{ github.event.pull_request.html_url }}|${{ env.RELEASE_ACTION }}> by
-                <${{ github.event.sender.html_url }}|${{ github.event.sender.login }}>
+            - name: 'Notify #deployments'
+              continue-on-error: true
+              uses: pcolby/post-to-slack@v1
+              with:
+                  channel: '#cd-test-deployments'
+                  text: >-
+                      Deployment of version ${{ env.RELEASE_VERSION}} to `${{ github.event.pull_request.base.ref }}`
+                      <${{ github.event.pull_request.html_url }}|${{ env.RELEASE_ACTION }}> by
+                      <${{ github.event.sender.html_url }}|${{ github.event.sender.login }}>
               url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-          - name: 'Notify #general'
-            if: github.event.pull_request.base.ref == 'production' && endswith(github.event.action, 'opened')
-            continue-on-error: true
-            uses: pcolby/post-to-slack@v1
-            with:
-              channel: '#cd-test-general'
-              text: '@here Version ${{ env.RELEASE_VERSION }} is about to be released to Production'
-              url: ${{ secrets.SLACK_WEBHOOK_URL }}
+            - name: 'Notify #general'
+              if: github.event.pull_request.base.ref == 'production' && endswith(github.event.action, 'opened')
+              continue-on-error: true
+              uses: pcolby/post-to-slack@v1
+              with:
+                  channel: '#cd-test-general'
+                  text: '@here Version ${{ env.RELEASE_VERSION }} is about to be released to Production'
+                  url: ${{ secrets.SLACK_WEBHOOK_URL }}
