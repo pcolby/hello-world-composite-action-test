@@ -21,8 +21,11 @@ jobs:
                   cat '${{ github.event_path }}'
                   releaseVersion="$(sed -Ene 's/.*Release ([0-9]+\.[0-9]+).*/\1/p' <<< "$COMMIT_MESSAGE")"
                   echo "RELEASE_VERSION=$releaseVersion" >> "$GITHUB_ENV"
+                  deploymentType="$(sed -Ee 's/.*CD ([^ ]+) ([^ ]+).*/\1 to \2/' <<< "$WORKFLOW_NAME")"
+                  echo "DEPLOYMENT_TYPE=$deploymentType" >> "$GITHUB_ENV"
               env:
                   COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
+                  WORKFLOW_NAME:  ${{ github.event.workflow.name }}
             - if: github.event.action == 'requested'
               run: 'echo ''DEPLOY_STATUS=:warning: Deploying'' >> "$GITHUB_ENV"'
             - if: github.event.action == 'completed' && github.event.workflow_run.conclusion == 'success'
@@ -40,7 +43,7 @@ jobs:
                   channel: '#cd-test-deployments'
                   text: >-
                       <${{ github.event.workflow_run.html_url }}|${{ env.DEPLOY_STATUS }}>
-                      `${{ github.event.workflow_run.name }}`
+                      version ${{ env.RELEASE_VERSION }} of ${{ env.DEPLOYMENT_TYPE }}
                   url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
             - name: 'Notify #dev-general'
@@ -51,7 +54,9 @@ jobs:
               uses: pcolby/post-to-slack@v1
               with:
                   channel: '#cd-test-dev-general'
-                  text: ${{ env.DEPLOY_STATUS }} '${{ github.event.workflow_run.name }}'
+                  text: >-
+                      <${{ github.event.workflow_run.html_url }}|${{ env.DEPLOY_STATUS }}>
+                      version ${{ env.RELEASE_VERSION }} of ${{ env.DEPLOYMENT_TYPE }}
                   url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
             - name: 'Notify #general'
