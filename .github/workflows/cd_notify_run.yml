@@ -49,9 +49,10 @@ jobs:
                   url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
             - name: 'Notify #dev-general'
-              if: >-
-                  github.event.action == 'completed' &&
-                  github.event.workflow_run.conclusion == 'failure'
+             if: >-
+                  github.event.workflow.name == 'CD App Production' ||
+                  ( github.event.workflow_run.conclusion == 'failure' &&
+                    !endsWith(github.event.workflow.name, 'Staging' )
               continue-on-error: true
               uses: pcolby/post-to-slack@v1
               with:
