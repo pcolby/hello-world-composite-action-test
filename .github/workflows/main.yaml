@@ -20,3 +20,9 @@ jobs:
             ]
       - run: echo random-number ${{ steps.foo.outputs.random-number }}
         shell: bash
+      - run: echo ${{ startswith('abc','a') }}
+      - run: echo ${{ startswith('abc','b') }}
+      - run: echo ${{ startswith('abc','c') }}
+      - run: echo ${{ startsWith('abc','a') }}
+      - run: echo ${{ startsWith('abc','b') }}
+      - run: echo ${{ startsWith('abc','c') }}
